@@ -63,7 +63,7 @@ export default class WiggleApi {
   // ---> Info:     Aktualizovanie vybranej školy študenta
   // ---> Schéma:   updateStudentSchool( id_študenta[integer], id_vybranej_školy[integer] )
   //                Funkcia očakáva id študenta a id vybranej školy
-  // ---> Výsledok: Žiaden, vybraná škola sa len aktualizuje v databáze
+  // ---> Výsledok: Success/Error log v konzoli
 
   updateStudentSchool(id, newSchool) {
     fetch('https://wiggle.gubrica.com/api_updateStudentSchool.php', {
@@ -73,6 +73,11 @@ export default class WiggleApi {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
+    }).then((response) => {
+      if (response.ok) {
+        console.log('Student school updated successfully!')
+      }
+      throw new Error('Something went wrong while updating student school.')
     })
   }
 
@@ -98,6 +103,29 @@ export default class WiggleApi {
       .then((data) => {
         return data
       })
+  }
+
+  // Update Student Information Status
+
+  // ---> Info:     Aktualizovanie údaju "Dá vedieť"
+  // ---> Schéma:   updateStudentInformationStatus( id_študenta[integer], dá_vedieť[boolean] )
+  //                Funkcia očakáva id študenta a údaj 0/1 pre údaj "Dá vedieť"
+  // ---> Výsledok: Success/Error log v konzoli
+
+  updateStudentInformationStatus(id, daVediet) {
+    fetch('https://wiggle.gubrica.com/api_updateStudentInformationStatus.php', {
+      credentials: 'same-origin',
+      method: 'POST',
+      body: `id=${id}&daVediet=${daVediet}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).then((response) => {
+      if (response.ok) {
+        console.log('Student information status updated successfully!')
+      }
+      throw new Error('Something went wrong while updating student information status.')
+    })
   }
 }
 
