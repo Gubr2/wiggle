@@ -1,5 +1,13 @@
+//       ////       ////       ////         ><<        ><<                      ><<               ><       ><<<<<<<  ><<
+//   ///    /// ///    /// ///    ///     ><<        ><< ><                   ><<                >< <<     ><<    ><<><<
+//   //       ////  ///  ////       //    ><<   ><   ><<      ><<      ><<    ><<   ><<         ><  ><<    ><<    ><<><<
+//   //      // //      // //      //     ><<  ><<   ><<><< ><<  ><< ><<  ><< ><< ><   ><<     ><<   ><<   ><<<<<<<  ><<
+//     //  //     //  //     //  //       ><< >< ><< ><<><<><<   ><<><<   ><< ><<><<<<< ><<   ><<<<<< ><<  ><<       ><<
+//       //         //         //         >< ><    ><<<<><< ><<  ><< ><<  ><< ><<><          ><<       ><< ><<       ><<
+//        ///   /// ///     ///           ><<        ><<><<     ><<      ><< ><<<  ><<<<    ><<         ><<><<       ><<
+//          /////      /////                                 ><<      ><<
+
 ////////////////////////////////////////
-////////////// WIGGLE API //////////////
 //////////////    v1.1    //////////////
 ////////////////////////////////////////
 
@@ -82,18 +90,42 @@ export default class WiggleApi {
     })
   }
 
-  // Update School List
+  // Get School List
 
   // ---> Info:     Aktualizovanie zoznamu škôl (dá sa použiť aj na prvé načítanie zoznamu)
-  // ---> Schéma:   updateSchoolList( rok[integer], semester[string], kategóriu[string] )
-  //                Funkcia očakáva školský rok vo forme: 2022, 2023... semester vo forme: 'LS', 'ZS' (veľkými písmenami)... semester vo forme: 'mk', 'av', 'md', 'vse'
-  // ---> Výsledok: JSON. Funkcia vráti školu so zoznamom študentov
+  // ---> Schéma:   getSchoolList( rok[integer], semester[string], kategóriu[string] )
+  //                Funkcia očakáva školský rok vo forme: 2022, 2023... semester vo forme: 'LS', 'ZS' (veľkými písmenami)... kategóriu vo forme: 'mk', 'av', 'md', 'vse'
+  // ---> Výsledok: JSON. Funkcia vráti vybrané školy so zoznamom študentov
 
   getSchoolList(year, semester, category) {
     return fetch('https://wiggle.gubrica.com/api_getSchoolList.php', {
       credentials: 'same-origin',
       method: 'POST',
       body: `skolsky_rok=${year}&semester=${semester}&kategoria=${category}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        return data
+      })
+  }
+
+  // Get School
+
+  // ---> Info:     Aktualizovanie konkrétnej školy (
+  // ---> Schéma:   getSchool( rok[integer], semester[string], kategóriu[string], id_školy[integer] )
+  //                Funkcia očakáva školský rok vo forme: 2022, 2023... semester vo forme: 'LS', 'ZS' (veľkými písmenami)... kategóriu vo forme: 'mk', 'av', 'md', 'vse'... id školy vo forme napr. 6360, 89...
+  // ---> Výsledok: JSON. Funkcia vráti konkrétnu školu so zoznamom študentov
+
+  getSchool(year, semester, category, school_id) {
+    return fetch('https://wiggle.gubrica.com/api_getSchool.php', {
+      credentials: 'same-origin',
+      method: 'POST',
+      body: `skolsky_rok=${year}&semester=${semester}&kategoria=${category}&school_id=${school_id}`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -184,11 +216,15 @@ export default class WiggleApi {
 /////////////////////////
 
 //
-// TESTING
+// TESTING PLATFORM
 //
 
-const api = new WiggleApi()
+// const api = new WiggleApi()
 
-api.getSchoolList(2022, 'ZS', 'mk').then((data) => {
-  console.log(data)
-})
+// api.getSchool(2022, 'ZS', 'mk', 89).then((data) => {
+//   console.log(data)
+// })
+
+// api.getSchoolList(2022, 'ZS', 'mk').then((data) => {
+//   console.log(data)
+// })
