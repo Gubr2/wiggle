@@ -1,6 +1,6 @@
 ////////////////////////////////////////
 ////////////// WIGGLE API //////////////
-//////////////    v1.0    //////////////
+//////////////    v1.1    //////////////
 ////////////////////////////////////////
 
 export default class WiggleApi {
@@ -76,8 +76,9 @@ export default class WiggleApi {
     }).then((response) => {
       if (response.ok) {
         console.log('Student school updated successfully!')
+      } else {
+        throw new Error('Something went wrong while updating student school.')
       }
-      throw new Error('Something went wrong while updating student school.')
     })
   }
 
@@ -88,8 +89,8 @@ export default class WiggleApi {
   //                Funkcia očakáva školský rok vo forme: 2022, 2023... semester vo forme: 'LS', 'ZS' (veľkými písmenami)... semester vo forme: 'mk', 'av', 'md', 'vse'
   // ---> Výsledok: JSON. Funkcia vráti školu so zoznamom študentov
 
-  updateSchoolList(year, semester, category) {
-    return fetch('https://wiggle.gubrica.com/api_updateSchoolList.php', {
+  getSchoolList(year, semester, category) {
+    return fetch('https://wiggle.gubrica.com/api_getSchoolList.php', {
       credentials: 'same-origin',
       method: 'POST',
       body: `skolsky_rok=${year}&semester=${semester}&kategoria=${category}`,
@@ -123,8 +124,57 @@ export default class WiggleApi {
     }).then((response) => {
       if (response.ok) {
         console.log('Student information status updated successfully!')
+      } else {
+        throw new Error('Something went wrong while updating student information status.')
       }
-      throw new Error('Something went wrong while updating student information status.')
+    })
+  }
+
+  // Get Year and Semester
+
+  // ---> Info:     Získanie konkrétnych výberových konaní a ich stavov zamknutia
+  // ---> Schéma:   getYearAndSemester()
+  //                Funkcia neočakáva žiadne argumenty
+  // ---> Výsledok: JSON. Funkcia vráti konkrétne výberových konania a ich stavy zamknutia
+
+  getYearAndSemester() {
+    return fetch('https://wiggle.gubrica.com/api_getYearAndSemester.php', {
+      credentials: 'same-origin',
+      method: 'POST',
+      body: '',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        return data
+      })
+  }
+
+  // Update Student Note
+
+  // ---> Info:     Aktualizovanie poznámky študenta
+  // ---> Schéma:   updateStudentSchool( id_študenta[integer], poznámka[string] )
+  //                Funkcia očakáva id študenta a poznámku
+  // ---> Výsledok: Success/Error log v konzoli
+
+  updateStudentNote(id, note) {
+    fetch('https://wiggle.gubrica.com/api_updateStudentNote.php', {
+      credentials: 'same-origin',
+      method: 'POST',
+      body: `id=${id}&note=${note}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).then((response) => {
+      if (response.ok) {
+        console.log('Student note updated successfully!')
+      } else {
+        throw new Error('Something went wrong while updating student note.')
+      }
     })
   }
 }
@@ -132,3 +182,13 @@ export default class WiggleApi {
 //////////////////////////
 /////////////////////////////////////
 /////////////////////////
+
+//
+// TESTING
+//
+
+const api = new WiggleApi()
+
+api.getSchoolList(2022, 'ZS', 'mk').then((data) => {
+  console.log(data)
+})
