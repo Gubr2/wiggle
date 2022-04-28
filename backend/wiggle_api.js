@@ -145,10 +145,10 @@ export default class WiggleApi {
 
   // Get Export
 
-  // ---> Info:     Získanie konkrétnych výberových konaní a ich stavov zamknutia
-  // ---> Schéma:   getYearAndSemester()
-  //                Funkcia neočakáva žiadne argumenty
-  // ---> Výsledok: JSON. Funkcia vráti konkrétne výberových konania a ich stavy zamknutia
+  // ---> Info:     Získanie .csv súboru z daného ročníka
+  // ---> Schéma:   getExport(rok[integer], semester[string])
+  //                Funkcia očakáva školský rok vo forme: 2022, 2023... kategóriu vo forme: 'mk', 'av', 'md', 'vse'
+  // ---> Výsledok: V prehliadači sa stiahne .csv súbor
 
   getExport(year, semester) {
     return fetch('https://wiggle.gubrica.com/api_getExport.php', {
@@ -243,7 +243,7 @@ export default class WiggleApi {
   // Update Student Note
 
   // ---> Info:     Aktualizovanie poznámky študenta
-  // ---> Schéma:   updateStudentSchool( id_študenta[integer], poznámka[string] )
+  // ---> Schéma:   updateStudentNote( id_študenta[integer], poznámka[string] )
   //                Funkcia očakáva id študenta a poznámku
   // ---> Výsledok: Success/Error log v konzoli
 
