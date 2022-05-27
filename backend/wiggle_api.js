@@ -14,7 +14,9 @@
 //////////////////////////////////////////////////////////////////
 
 export default class WiggleApi {
-  constructor() {}
+  constructor(server) {
+    this.serverDomain = server.url
+  }
 
   //////////////////////////////////////////////////////////
 
@@ -31,13 +33,13 @@ export default class WiggleApi {
   // ---> Výsledok: JSON
 
   getStudentDetails(id) {
-    return fetch('https://wiggle.gubrica.com/api_getStudentDetails.php', {
+    return fetch(`${this.serverDomain}/api_getStudentDetails.php`, {
       credentials: 'same-origin',
       method: 'POST',
       body: `id=${id}`,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
       .then((response) => {
         return response.json()
@@ -55,13 +57,13 @@ export default class WiggleApi {
   // ---> Výsledok: JSON. Funkcia vráti konkrétnu školu so zoznamom študentov
 
   getSchool(year, semester, category, school_id) {
-    return fetch('https://wiggle.gubrica.com/api_getSchool.php', {
+    return fetch(`${this.serverDomain}/api_getSchool.php`, {
       credentials: 'same-origin',
       method: 'POST',
       body: `skolsky_rok=${year}&semester=${semester}&kategoria=${category}&school_id=${school_id}`,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
       .then((response) => {
         return response.json()
@@ -79,13 +81,13 @@ export default class WiggleApi {
   // ---> Výsledok: JSON. Funkcia vráti vybrané školy so zoznamom študentov
 
   getSchoolList(year, semester, category) {
-    return fetch('https://wiggle.gubrica.com/api_getSchoolList.php', {
+    return fetch(`${this.serverDomain}/api_getSchoolList.php`, {
       credentials: 'same-origin',
       method: 'POST',
       body: `skolsky_rok=${year}&semester=${semester}&kategoria=${category}`,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
       .then((response) => {
         return response.json()
@@ -103,13 +105,13 @@ export default class WiggleApi {
   // ---> Výsledok: JSON
 
   getSchoolAlternatives(category) {
-    return fetch('https://wiggle.gubrica.com/api_getSchoolAlternatives.php', {
+    return fetch(`${this.serverDomain}/api_getSchoolAlternatives.php`, {
       credentials: 'same-origin',
       method: 'POST',
       body: `category=${category}`,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
       .then((response) => {
         return response.json()
@@ -127,13 +129,13 @@ export default class WiggleApi {
   // ---> Výsledok: JSON. Funkcia vráti konkrétne výberových konania a ich stavy zamknutia
 
   getYearAndSemester() {
-    return fetch('https://wiggle.gubrica.com/api_getYearAndSemester.php', {
+    return fetch(`${this.serverDomain}/api_getYearAndSemester.php`, {
       credentials: 'same-origin',
       method: 'POST',
       body: '',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
       .then((response) => {
         return response.json()
@@ -151,13 +153,13 @@ export default class WiggleApi {
   // ---> Výsledok: V prehliadači sa stiahne .csv súbor
 
   getExport(year, semester) {
-    return fetch('https://wiggle.gubrica.com/api_getExport.php', {
+    return fetch(`${this.serverDomain}/api_getExport.php`, {
       credentials: 'same-origin',
       method: 'POST',
       body: `year=${year}&semester=${semester}`,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
       .then((response) => {
         return response.json()
@@ -169,7 +171,7 @@ export default class WiggleApi {
         let header = Object.keys(items[0])
         let csv = [
           header.join(';'), // header row first
-          ...items.map((row) => header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(';'))
+          ...items.map((row) => header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(';')),
         ].join('\r\n')
 
         // ---> Stiahnutie .csv
@@ -200,19 +202,22 @@ export default class WiggleApi {
   // ---> Výsledok: Success/Error log v konzoli
 
   updateStudentSchool(id, newSchool) {
-    fetch('https://wiggle.gubrica.com/api_updateStudentSchool.php', {
-      credentials: 'same-origin',
-      method: 'POST',
-      body: `id=${id}&newSchool=${newSchool}`,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }).then((response) => {
-      if (response.ok) {
-        console.log('Student school updated successfully!')
-      } else {
-        throw new Error('Something went wrong while updating student school.')
-      }
+    return new Promise((resolve) => {
+      fetch(`${this.serverDomain}/api_updateStudentSchool.php`, {
+        credentials: 'same-origin',
+        method: 'POST',
+        body: `id=${id}&newSchool=${newSchool}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }).then((response) => {
+        if (response.ok) {
+          console.log('Student school updated successfully!')
+          resolve()
+        } else {
+          throw new Error('Something went wrong while updating student school.')
+        }
+      })
     })
   }
 
@@ -224,19 +229,22 @@ export default class WiggleApi {
   // ---> Výsledok: Success/Error log v konzoli
 
   updateStudentInformationStatus(id, daVediet) {
-    fetch('https://wiggle.gubrica.com/api_updateStudentInformationStatus.php', {
-      credentials: 'same-origin',
-      method: 'POST',
-      body: `id=${id}&daVediet=${daVediet}`,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }).then((response) => {
-      if (response.ok) {
-        console.log('Student information status updated successfully!')
-      } else {
-        throw new Error('Something went wrong while updating student information status.')
-      }
+    return new Promise((resolve) => {
+      fetch(`${this.serverDomain}api_updateStudentInformationStatus.php`, {
+        credentials: 'same-origin',
+        method: 'POST',
+        body: `id=${id}&daVediet=${daVediet}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }).then((response) => {
+        if (response.ok) {
+          console.log('Student information status updated successfully!')
+          resolve()
+        } else {
+          throw new Error('Something went wrong while updating student information status.')
+        }
+      })
     })
   }
 
@@ -248,19 +256,22 @@ export default class WiggleApi {
   // ---> Výsledok: Success/Error log v konzoli
 
   updateStudentNote(id, note) {
-    fetch('https://wiggle.gubrica.com/api_updateStudentNote.php', {
-      credentials: 'same-origin',
-      method: 'POST',
-      body: `id=${id}&note=${note}`,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }).then((response) => {
-      if (response.ok) {
-        console.log('Student note updated successfully!')
-      } else {
-        throw new Error('Something went wrong while updating student note.')
-      }
+    return new Promise((resolve) => {
+      fetch(`${this.serverDomain}/api_updateStudentNote.php`, {
+        credentials: 'same-origin',
+        method: 'POST',
+        body: `id=${id}&note=${note}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }).then((response) => {
+        if (response.ok) {
+          console.log('Student note updated successfully!')
+          resolve()
+        } else {
+          throw new Error('Something went wrong while updating student note.')
+        }
+      })
     })
   }
 }
@@ -270,13 +281,13 @@ export default class WiggleApi {
 /////////////////////////
 
 //
-// TESTING PLATFORM
+// VZOR POUŽITIA
 //
 
-// const api = new WiggleApi()
+const api = new WiggleApi({
+  url: 'https://wiggle.gubrica.com',
+})
 
-// api.getExport(2022, 'ZS')
-
-// api.getSchoolList(2022, 'ZS', 'mk').then((data) => {
-//   console.log(data)
-// })
+api.getSchoolList(2022, 'ZS', 'mk').then((data) => {
+  console.log(data)
+})
